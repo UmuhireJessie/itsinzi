@@ -70,8 +70,20 @@ const loginUser = async (req, res) => {
   }
 };
 
-const loginWithGoogle = async(req, res) => {
-    
+const googleAuthHandler = async(req, res) => {
+  const { value } = req.user.emails[0];
+  const { firstName } = req.user.firstName;
+  const newUser = {
+    firstName,
+    email: value,
+    password: '12345'
+  };
+  const { id, email } = await addUser(newUser);
+  const userToken = signToken({
+    id: id,
+    email: email,
+  }, '1h');
+  return res.redirect(`/auth/redirect?key=${userToken}`);
 }
 
-export { addUser, loginUser };
+export { addUser, loginUser, googleAuthHandler };
